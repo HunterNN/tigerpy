@@ -5,8 +5,7 @@ A small clone of the tigerjython project.
 
 ## Description
 
-A longer description of your project goes here...
-
+This project aims to clone the tigerjython project to the python environment with minor enhancement.
 
 <!-- pyscaffold-notes -->
 
