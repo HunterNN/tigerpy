@@ -1,10 +1,12 @@
 import numpy as np
 import pygame
-from pygame.locals import *
-
+import sys
+from 
 START_SPEED = 50
 
 main_turtle = None
+
+#pip3 install -U -e C:\Users\npro9\git\tigerpy
 
 class Turtle():
     def __init__(self) -> None:
@@ -16,12 +18,25 @@ class Turtle():
         self.speed = START_SPEED
         self.shown = True
     # TODO
-    pass
+    pass  
+
 
 def makeTurtle() -> Turtle:
     global main_turtle 
     main_turtle = Turtle()
-    # TODO
+    background_colour = (255,255,255)
+    (width, height) = (300, 200)
+    screen = pygame.display.set_mode((width, height))
+    pygame.display.set_caption('Test')
+    pygame.display.flip()
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+                running = False
+        pygame.display.update()
     return main_turtle
 
 def forward(distance) -> None:
