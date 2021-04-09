@@ -9,6 +9,12 @@ This project aims to clone the tigerjython project to the python environment wit
 
 <!-- pyscaffold-notes -->
 
+## Install
+### Windows
+`pip install git+https://git.hunter99.ch/Hunter99/tigerpy -U`
+### Ubuntu
+`sudo pip3 install git+https://git.hunter99.ch/Hunter99/tigerpy -U`
+
 ## Note
 
 This project has been set up using PyScaffold 4.0.1. For details and usage

@@ -1,10 +1,12 @@
 import numpy as np
 import pygame
+import threading
 import sys
-from 
+
 START_SPEED = 50
 
 main_turtle = None
+draw_thread_running = False
 
 #pip3 install -U -e C:\Users\npro9\git\tigerpy
 
@@ -23,20 +25,16 @@ class Turtle():
 
 def makeTurtle() -> Turtle:
     global main_turtle 
+    global draw_thread_running
+    draw_thread_running = True
     main_turtle = Turtle()
     background_colour = (255,255,255)
     (width, height) = (300, 200)
     screen = pygame.display.set_mode((width, height))
-    pygame.display.set_caption('Test')
+    pygame.display.set_caption('Turtle')
     pygame.display.flip()
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
-                running = False
-        pygame.display.update()
+    thread = threading.Thread(target=_drawThread, args=(0,))
+    thread.start()
     return main_turtle
 
 def forward(distance) -> None:
@@ -141,3 +139,12 @@ def _angle_between(v1, v2):
     v1_u = _unit_vector(v1)
     v2_u = _unit_vector(v2)
     return np.arccos(np.clip(np.dot(v1_u, v2_u), -1.0, 1.0))
+
+def _drawThread():
+    global draw_thread_running
+    while draw_thread_running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+                draw_thread_running = False
+        pygame.display.update()
