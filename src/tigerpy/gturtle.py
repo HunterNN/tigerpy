@@ -3,10 +3,15 @@ import pygame
 import threading
 import sys
 
+__author__ = "Stephan Kessler"
+__copyright__ = "Stephan Kessler"
+__license__ = "MIT"
+
 START_SPEED = 50
 
 main_turtle = None
 draw_thread_running = False
+screen = None
 
 #pip3 install -U -e C:\Users\npro9\git\tigerpy
 
@@ -22,18 +27,24 @@ class Turtle():
     # TODO
     pass  
 
+class Color():
+    white = (255, 255, 255)
+    red = (255, 0, 0)
+    green = (0, 255, 0)
+    blue = (0, 0, 255)
+    black = (0, 0, 0)
 
 def makeTurtle() -> Turtle:
     global main_turtle 
     global draw_thread_running
+    global screen
     draw_thread_running = True
     main_turtle = Turtle()
-    background_colour = (255,255,255)
-    (width, height) = (300, 200)
+    (width, height) = (800, 800)
     screen = pygame.display.set_mode((width, height))
     pygame.display.set_caption('Turtle')
     pygame.display.flip()
-    thread = threading.Thread(target=_drawThread, args=(0,))
+    thread = threading.Thread(target=_drawThread, args=())
     thread.start()
     return main_turtle
 
@@ -147,4 +158,5 @@ def _drawThread():
             if event.type == pygame.QUIT:
                 sys.exit()
                 draw_thread_running = False
+        screen.fill(Color.white)
         pygame.display.update()
