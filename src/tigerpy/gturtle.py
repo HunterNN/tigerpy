@@ -4,6 +4,7 @@ import threading
 import sys
 import os
 import resource
+from vector2d import Vector2D
 
 __author__ = "Stephan Kessler"
 __copyright__ = "Stephan Kessler"
@@ -38,8 +39,8 @@ class Turtle():
             (self.x - rect.centerx, self.y - rect.centery)))
 
     def forward(self, distance) -> None:
-        # TODO
-        pass
+        for i in range(distance):
+            pass
 
     def back(self, distance) -> None:
         # TODO
@@ -112,9 +113,8 @@ class Turtle():
         self.angle
 
     def getDirectionToPoint(self, x, y) -> int:
-        vector1 = np.array(self.getPos())
-        vector2 = np.array([x, y])
-        return _angle_between(vector1, vector2)
+        vector1 = Vector2D(self.getX(), self.getY())
+        return vector1.angleBetweenDeg(Vector2D(x, y))
 
     def getHeading(self) -> int:
         return getDirectionToPoint(self.getX() + 1, self.getY())
@@ -249,14 +249,6 @@ def getHeading() -> int:
 
 # Private Functions
 
-def _unit_vector(vector):
-    return vector / np.linalg.norm(vector)
-
-def _angle_between(v1, v2):
-    v1_u = _unit_vector(v1)
-    v2_u = _unit_vector(v2)
-    return np.arccos(np.clip(np.dot(v1_u, v2_u), -1.0, 1.0))
-
 def _drawThread():
     global draw_thread_running
     global main_turtle
@@ -271,4 +263,4 @@ def _drawThread():
         pygame.display.update()
 
 def _convertToPygameCords(cords):
-    return (cords[0] + WINDOW_SIZE[0] / 2, cords[1] + WINDOW_SIZE[1] / 2)
+    return (cords[0] + WINDOW_SIZE[0] / 2, cords[1] * (-1) + WINDOW_SIZE[1] / 2)
