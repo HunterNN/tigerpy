@@ -4,7 +4,7 @@ import threading
 import sys
 import os
 import resource
-from vector2d import Vector2D
+from tigerpy.vector2d import Vector2D
 
 __author__ = "Stephan Kessler"
 __copyright__ = "Stephan Kessler"
