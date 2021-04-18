@@ -4,6 +4,7 @@ import threading
 import sys
 import os
 import resource
+from tigerpy.vector2d import Vector2D
 
 __author__ = "Stephan Kessler"
 __copyright__ = "Stephan Kessler"
@@ -36,6 +37,87 @@ class Turtle():
         rect = self.image.get_rect()
         surface.blit(self.image, _convertToPygameCords(
             (self.x - rect.centerx, self.y - rect.centery)))
+
+    def forward(self, distance) -> None:
+        for i in range(distance):
+            pass
+
+    def back(self, distance) -> None:
+        # TODO
+        pass
+
+    def showTurtle(self) -> None:
+        # TODO
+        pass
+
+    def hideTurtle(self) -> None:
+        # TODO
+        pass
+
+    def home(self) -> None:
+        # TODO
+        pass
+
+    def left(self, angle) -> None:
+        # TODO
+        pass
+
+    def right(self, angle) -> None:
+        # TODO
+        pass
+
+    def penDown(self) -> None:
+        # TODO
+        pass
+
+    def penUp(self) -> None:
+        # TODO
+        pass
+
+    def leftArc(self, selfradius, angle) -> None:
+        # TODO
+        pass    
+
+    def rightArc(self, radius, angle) -> None:
+        # TODO
+        pass
+
+    def setSpeed(self, speed) -> None:
+        # TODO
+        pass
+
+    def getX(self) -> int:
+        return self.x
+
+    def setX(self, x) -> None:
+        self.x = x
+
+    def getY(self) -> int:
+        return self.y
+
+    def setY(self, y) -> None:
+        self.y = y
+
+    def getPos(self) -> list:
+        return [self.getX(), self.getY()]
+
+    def setPosition(self, x, y) -> None:
+        self.setX(x)
+        self.setY(y)
+
+    def moveTo(self, x, y) -> None:
+        # TODO
+        pass
+
+    def getRotation(self) -> int:
+        self.angle
+
+    def getDirectionToPoint(self, x, y) -> int:
+        vector1 = Vector2D(self.getX(), self.getY())
+        return vector1.angleBetweenDeg(Vector2D(x, y))
+
+    def getHeading(self) -> int:
+        return getDirectionToPoint(self.getX() + 1, self.getY())
 
 
 class Color():
@@ -92,131 +174,80 @@ def makeTurtle(type = TurtleTypes.bear) -> Turtle:
     return main_turtle
 
 def forward(distance) -> None:
-    # TODO
-    pass
-
+    main_turtle.forward(distance)
 
 def back(distance) -> None:
-    # TODO
-    pass
-
+    main_turtle.back(distance)
 
 def showTurtle() -> None:
-    # TODO
-    pass
-
+    main_turtle.showTurtle()
 
 def hideTurtle() -> None:
-    # TODO
-    pass
-
+    main_turtle.hideTurtle()
 
 def home() -> None:
-    # TODO
-    pass
-
+    main_turtle.home()
 
 def left(angle) -> None:
-    # TODO
-    pass
-
+    main_turtle.left(angle)
 
 def right(angle) -> None:
-    # TODO
-    pass
-
+    main_turtle.right(angle)
 
 def penDown() -> None:
-    # TODO
-    pass
-
+    main_turtle.penDown()
 
 def penUp() -> None:
-    # TODO
-    pass
-
+    main_turtle.penUp()
 
 def leftArc(radius, angle) -> None:
-    # TODO
-    pass
-
+    main_turtle.leftArc(radius, angle)
 
 def leftCircle(radius) -> None:
     leftArc(radius, 360)
 
-
 def rightArc(radius, angle) -> None:
-    # TODO
-    pass
-
+    main_turtle.rightArc(radius, angle)
 
 def rightCircle(radius) -> None:
     rightArc(radius, 360)
 
-
 def setSpeed(speed) -> None:
-    # TODO
-    pass
-
+    main_turtle.setSpeed(speed)
 
 def getX() -> int:
-    # TODO
-    pass
-
+    return main_turtle.getX()
 
 def setX(x) -> None:
-    main_turtle.x = x
-
+    main_turtle.setX(x)
 
 def getY() -> int:
-    # TODO
-    pass
-
+    return main_turtle.getY()
 
 def setY(y) -> None:
-    main_turtle.y = y
-
+    main_turtle.setY(y)
 
 def getPos() -> list:
-    return [getX(), getY()]
+    return main_turtle.getPos()
 
-
-def setPos(x, y) -> None:
-    setX(x)
-    setY(y)
-
+def setPosition(x, y) -> None:
+    main_turtle.setPosition(x, y)
 
 def moveTo(x, y) -> None:
-    # TODO
-    pass
-
+    main_turtle.moveTo(x, y)
 
 def getRotation() -> int:
-    # TODO
-    pass
+    return main_turtle.getRotation()
+
+def getDirectionToPoint(x, y) -> int:
+    return main_turtle.getDirectionToPoint(x, y)
 
 
-def direction(x, y) -> int:
-    vector1 = np.array(getPos())
-    vector2 = np.array([x, y])
-    return _angle_between(vector1, vector2)
+def getHeading() -> int:
+    return main_turtle.getHeading()
 
-
-def heading() -> int:
-    return direction(getX() + 1, getY())
 
 # Private Functions
-
-
-def _unit_vector(vector):
-    return vector / np.linalg.norm(vector)
-
-
-def _angle_between(v1, v2):
-    v1_u = _unit_vector(v1)
-    v2_u = _unit_vector(v2)
-    return np.arccos(np.clip(np.dot(v1_u, v2_u), -1.0, 1.0))
-
 
 def _drawThread():
     global draw_thread_running
@@ -231,6 +262,5 @@ def _drawThread():
         main_turtle.draw(screen)
         pygame.display.update()
 
-
 def _convertToPygameCords(cords):
-    return (cords[0] + WINDOW_SIZE[0] / 2, cords[1] + WINDOW_SIZE[1] / 2)
+    return (cords[0] + WINDOW_SIZE[0] / 2, cords[1] * (-1) + WINDOW_SIZE[1] / 2)
