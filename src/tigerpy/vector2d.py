@@ -73,9 +73,10 @@ class Vector2D:
         y2 = math.sin(angle) * self.x + math.cos(angle) * self.y
         self.x = x2
         self.y = y2
+        return self
     
     def rotateDeg(self, angle):
-        self.rotateRad(angle / 180 * math.pi)
+        return self.rotateRad(angle / 180 * math.pi)
 
     def angleBetweenRad(self, vector2):
         dotP = self.dot(vector2)

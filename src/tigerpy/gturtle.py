@@ -2,7 +2,7 @@ import pygame
 import threading
 import sys
 import os
-import resource
+import time
 from tigerpy.vector2d import Vector2D
 
 __author__ = "Stephan Kessler"
@@ -10,16 +10,19 @@ __copyright__ = "Stephan Kessler"
 __license__ = "MIT"
 
 START_SPEED = 50
+HIDE_SPEED = 10000
 SCRIPT_PATH = os.path.dirname(os.path.abspath(__file__))
 WINDOW_SIZE = (800, 800)
 
 main_turtle = None
 draw_thread_running = False
 screen = None
+thread_command = None
+animation_steps = 0
 
 
 class Turtle():
-    def __init__(self, type) -> None:
+    def __init__(self, type, scaling = 0.5) -> None:
         global START_SPEED
         self.image_path = type
         self.x = 0
@@ -30,40 +33,135 @@ class Turtle():
         self.shown = True
         image = pygame.image.load(self.image_path)
         self.image = pygame.transform.smoothscale(
-            image, (int(image.get_rect().width / 2), int(image.get_rect().height / 2)))
+            image, (int(image.get_rect().width * scaling), int(image.get_rect().height * scaling)))
+        self.draw_image = self.image
 
     def draw(self, surface):
-        rect = self.image.get_rect()
-        surface.blit(self.image, _convertToPygameCords(
-            (self.x - rect.centerx, self.y - rect.centery)))
+        if self.shown:
+            rect = self.draw_image.get_rect()
+            surface.blit(self.draw_image, _convertToPygameCords(
+                (self.x - rect.centerx, self.y + rect.centery)))
 
     def forward(self, distance) -> None:
-        for i in range(distance):
-            pass
+        global thread_command
+        global animation_steps
+        # block until free
+        while thread_command != None:
+            time.sleep(0.1)
+        animation_steps = distance
+        def thread_left():
+            global START_SPEED
+            global HIDE_SPEED
+            global thread_command
+            global animation_steps
+            if self.shown:
+                speed = self.speed
+            else:
+                speed = HIDE_SPEED
+            for i in range(int(speed / START_SPEED * 2)):
+                position = Vector2D(self.x, self.y)
+                direction = Vector2D(0, 1).rotateDeg(self.angle)
+                position = position + direction
+                self.x = position.x
+                self.y = position.y
+                animation_steps -= 1
+                if animation_steps == 0:
+                    thread_command = None
+                    break
+        thread_command = thread_left
 
     def back(self, distance) -> None:
-        # TODO
-        pass
+        global thread_command
+        global animation_steps
+        # block until free
+        while thread_command != None:
+            time.sleep(0.1)
+        animation_steps = distance
+        def thread_left():
+            global START_SPEED
+            global HIDE_SPEED
+            global thread_command
+            global animation_steps
+            if self.shown:
+                speed = self.speed
+            else:
+                speed = HIDE_SPEED
+            for i in range(int(speed / START_SPEED * 2)):
+                position = Vector2D(self.x, self.y)
+                direction = Vector2D(0, 1).rotateDeg(self.angle)
+                position = position - direction
+                self.x = position.x
+                self.y = position.y
+                animation_steps -= 1
+                if animation_steps == 0:
+                    thread_command = None
+                    break
+        thread_command = thread_left
 
     def showTurtle(self) -> None:
-        # TODO
-        pass
+        # block until free
+        while thread_command != None:
+            time.sleep(0.1)
+        self.shown = True
 
     def hideTurtle(self) -> None:
-        # TODO
-        pass
+        # block until free
+        while thread_command != None:
+            time.sleep(0.1)
+        self.shown = False
 
     def home(self) -> None:
-        # TODO
-        pass
+        setPosition(0, 0)
 
     def left(self, angle) -> None:
-        # TODO
-        pass
+        global thread_command
+        global animation_steps
+        # block until free
+        while thread_command != None:
+            time.sleep(0.1)
+        animation_steps = angle
+        def thread_left():
+            global START_SPEED
+            global HIDE_SPEED
+            global thread_command
+            global animation_steps
+            if self.shown:
+                speed = self.speed
+            else:
+                speed = HIDE_SPEED
+            for i in range(int(speed / START_SPEED * 2)):
+                self.angle += 1
+                self.draw_image = pygame.transform.rotate(self.image, self.angle)
+                animation_steps -= 1
+                if animation_steps == 0:
+                    thread_command = None
+                    break
+        thread_command = thread_left
 
     def right(self, angle) -> None:
-        # TODO
-        pass
+        global thread_command
+        global animation_steps
+        # block until free
+        while thread_command != None:
+            time.sleep(0.1)
+        animation_steps = angle
+        def thread_left():
+            global START_SPEED
+            global HIDE_SPEED
+            global thread_command
+            global animation_steps
+            if self.shown:
+                speed = self.speed
+            else:
+                speed = HIDE_SPEED
+            for i in range(int(speed / START_SPEED * 2)):
+                self.angle -= 1
+                self.draw_image = pygame.transform.rotate(self.image, self.angle)
+                animation_steps -= 1
+                if animation_steps == 0:
+                    thread_command = None
+                    break
+        thread_command = thread_left
 
     def penDown(self) -> None:
         # TODO
@@ -89,12 +187,18 @@ class Turtle():
         return self.x
 
     def setX(self, x) -> None:
+        global thread_command
+        while thread_command != None:
+            time.sleep(0.1)
         self.x = x
 
     def getY(self) -> int:
         return self.y
 
     def setY(self, y) -> None:
+        global thread_command
+        while thread_command != None:
+            time.sleep(0.1)
         self.y = y
 
     def getPos(self) -> list:
@@ -127,6 +231,7 @@ class Color():
     black = (0, 0, 0)
 
 class TurtleTypes():
+    arrow = os.path.join(SCRIPT_PATH, "resources/images/icons/arrow_1_shadow.png")
     bear = os.path.join(SCRIPT_PATH, "resources/images/turtles/bear.png")
     buffalo = os.path.join(SCRIPT_PATH, "resources/images/turtles/buffalo.png")
     chick = os.path.join(SCRIPT_PATH, "resources/images/turtles/chick.png")
@@ -159,7 +264,7 @@ class TurtleTypes():
     zebra = os.path.join(SCRIPT_PATH, "resources/images/turtles/zebra.png")
 
 
-def makeTurtle(type = TurtleTypes.bear) -> Turtle:
+def makeTurtle(type = TurtleTypes.arrow) -> Turtle:
     global main_turtle
     global draw_thread_running
     global screen
@@ -167,7 +272,11 @@ def makeTurtle(type = TurtleTypes.bear) -> Turtle:
     screen = pygame.display.set_mode(WINDOW_SIZE)
     pygame.display.set_caption('Turtle')
     pygame.display.flip()
-    main_turtle = Turtle(type)
+    if type == TurtleTypes.arrow:
+        scale = 1
+    else:
+        scale = 0.5
+    main_turtle = Turtle(type, scaling = scale)
     thread = threading.Thread(target=_drawThread, args=())
     thread.start()
     return main_turtle
@@ -252,7 +361,10 @@ def _drawThread():
     global draw_thread_running
     global main_turtle
     global screen
+    global thread_command
     while draw_thread_running:
+        if thread_command != None:
+            thread_command()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
@@ -260,6 +372,7 @@ def _drawThread():
         screen.fill(Color.white)
         main_turtle.draw(screen)
         pygame.display.update()
+        pygame.time.wait(20)
 
 def _convertToPygameCords(cords):
     return (cords[0] + WINDOW_SIZE[0] / 2, cords[1] * (-1) + WINDOW_SIZE[1] / 2)
