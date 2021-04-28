@@ -31,6 +31,7 @@ class Turtle():
         self.pen_down = True
         self.speed = START_SPEED
         self.shown = True
+        self.pen_color = Color.red
         image = pygame.image.load(self.image_path)
         self.image = pygame.transform.smoothscale(
             image, (int(image.get_rect().width * scaling), int(image.get_rect().height * scaling)))
@@ -54,6 +55,7 @@ class Turtle():
             global HIDE_SPEED
             global thread_command
             global animation_steps
+            global paper
             if self.shown:
                 speed = self.speed
             else:
@@ -64,6 +66,8 @@ class Turtle():
                 position = position + direction
                 self.x = position.x
                 self.y = position.y
+                if self.pen_down:
+                    _drawPixelLine(paper, _convertToPygameCords((self.x, self.y)), self.pen_color)
                 animation_steps -= 1
                 if animation_steps == 0:
                     thread_command = None
@@ -92,6 +96,8 @@ class Turtle():
                 position = position - direction
                 self.x = position.x
                 self.y = position.y
+                if self.pen_down:
+                    _drawPixelLine(paper, _convertToPygameCords((self.x, self.y)), self.pen_color)
                 animation_steps -= 1
                 if animation_steps == 0:
                     thread_command = None
@@ -164,12 +170,16 @@ class Turtle():
         thread_command = thread_left
 
     def penDown(self) -> None:
-        # TODO
-        pass
+        # block until free
+        while thread_command != None:
+            time.sleep(0.1)
+        self.pen_down = True
 
     def penUp(self) -> None:
-        # TODO
-        pass
+        # block until free
+        while thread_command != None:
+            time.sleep(0.1)
+        self.pen_down = False
 
     def leftArc(self, selfradius, angle) -> None:
         # TODO
@@ -268,8 +278,10 @@ def makeTurtle(type = TurtleTypes.arrow) -> Turtle:
     global main_turtle
     global draw_thread_running
     global screen
+    global paper
     draw_thread_running = True
     screen = pygame.display.set_mode(WINDOW_SIZE)
+    paper = pygame.Surface(WINDOW_SIZE, pygame.SRCALPHA, 32)
     pygame.display.set_caption('Turtle')
     pygame.display.flip()
     if type == TurtleTypes.arrow:
@@ -361,6 +373,7 @@ def _drawThread():
     global draw_thread_running
     global main_turtle
     global screen
+    global paper
     global thread_command
     while draw_thread_running:
         if thread_command != None:
@@ -370,9 +383,55 @@ def _drawThread():
                 sys.exit()
                 draw_thread_running = False
         screen.fill(Color.white)
+        screen.blit(paper, (0, 0))
         main_turtle.draw(screen)
         pygame.display.update()
         pygame.time.wait(20)
 
+def _drawPixelLine(surface, position, color):
+    cursor = (position[0] + 1, position[1])
+    cursor_color = surface.get_at(cursor)
+    surface.set_at(cursor, _addColor(cursor_color, (color[0], color[1], color[2], 50)))
+    cursor = (position[0] - 1, position[1])
+    cursor_color = surface.get_at(cursor)
+    surface.set_at(cursor, _addColor(cursor_color, (color[0], color[1], color[2], 50)))
+    cursor = (position[0], position[1] + 1)
+    cursor_color = surface.get_at(cursor)
+    surface.set_at(cursor, _addColor(cursor_color, (color[0], color[1], color[2], 50)))
+    cursor = (position[0], position[1] - 1)
+    cursor_color = surface.get_at(cursor)
+    surface.set_at(cursor, _addColor(cursor_color, (color[0], color[1], color[2], 50)))
+
+    cursor = (position[0] + 1, position[1] + 1)
+    cursor_color = surface.get_at(cursor)
+    surface.set_at(cursor, _addColor(cursor_color, (color[0], color[1], color[2], 25)))
+    cursor = (position[0] + 1, position[1] - 1)
+    cursor_color = surface.get_at(cursor)
+    surface.set_at(cursor, _addColor(cursor_color, (color[0], color[1], color[2], 25)))
+    cursor = (position[0] - 1, position[1] - 1)
+    cursor_color = surface.get_at(cursor)
+    surface.set_at(cursor, _addColor(cursor_color, (color[0], color[1], color[2], 25)))
+    cursor = (position[0] - 1, position[1]  + 1)
+    cursor_color = surface.get_at(cursor)
+    surface.set_at(cursor, _addColor(cursor_color, (color[0], color[1], color[2], 25)))
+
+    cursor = position
+    cursor_color = surface.get_at(cursor)
+    surface.set_at(cursor, _addColor(cursor_color, color))
+
+def _addColor(color_1, color_2):
+    if len(color_1) == 3:
+        color_1 = (color_1[0], color_1[1], color_1[2], 255)
+    if len(color_2) == 3:
+        color_2 = (color_2[0], color_2[1], color_2[2], 255)
+    
+    new_color = [0, 0, 0, 0]
+    for i, e in enumerate(color_1):
+        new_color[i] = color_1[i] + color_2[i]
+        if new_color[i] > 255:
+            new_color[i] = 255
+
+    return tuple(new_color)
+
 def _convertToPygameCords(cords):
-    return (cords[0] + WINDOW_SIZE[0] / 2, cords[1] * (-1) + WINDOW_SIZE[1] / 2)
+    return (int(cords[0] + WINDOW_SIZE[0] / 2), int(cords[1] * (-1) + WINDOW_SIZE[1] / 2))
