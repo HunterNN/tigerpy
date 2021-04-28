@@ -13,12 +13,14 @@ START_SPEED = 50
 HIDE_SPEED = 10000
 SCRIPT_PATH = os.path.dirname(os.path.abspath(__file__))
 WINDOW_SIZE = (800, 800)
+BLOCK_TIME = 0.001
 
 main_turtle = None
 draw_thread_running = False
 screen = None
 thread_command = None
 animation_steps = 0
+global_show = True
 
 
 class Turtle():
@@ -46,9 +48,10 @@ class Turtle():
     def forward(self, distance) -> None:
         global thread_command
         global animation_steps
+        global BLOCK_TIME
         # block until free
         while thread_command != None:
-            time.sleep(0.1)
+            time.sleep(BLOCK_TIME)
         animation_steps = distance
         def thread_left():
             global START_SPEED
@@ -77,9 +80,10 @@ class Turtle():
     def back(self, distance) -> None:
         global thread_command
         global animation_steps
+        global BLOCK_TIME
         # block until free
         while thread_command != None:
-            time.sleep(0.1)
+            time.sleep(BLOCK_TIME)
         animation_steps = distance
         def thread_left():
             global START_SPEED
@@ -105,15 +109,20 @@ class Turtle():
         thread_command = thread_left
 
     def showTurtle(self) -> None:
+        global thread_command
+        global BLOCK_TIME
         # block until free
         while thread_command != None:
-            time.sleep(0.1)
+            time.sleep(BLOCK_TIME)
+        self.draw_image = pygame.transform.rotozoom(self.image, self.angle, 1)
         self.shown = True
 
     def hideTurtle(self) -> None:
+        global thread_command
+        global BLOCK_TIME
         # block until free
         while thread_command != None:
-            time.sleep(0.1)
+            time.sleep(BLOCK_TIME)
         self.shown = False
 
     def home(self) -> None:
@@ -122,9 +131,10 @@ class Turtle():
     def left(self, angle) -> None:
         global thread_command
         global animation_steps
+        global BLOCK_TIME
         # block until free
         while thread_command != None:
-            time.sleep(0.1)
+            time.sleep(BLOCK_TIME)
         animation_steps = angle
         def thread_left():
             global START_SPEED
@@ -136,10 +146,15 @@ class Turtle():
             else:
                 speed = HIDE_SPEED
             for i in range(int(speed / START_SPEED * 2)):
-                self.angle += 1
-                self.draw_image = pygame.transform.rotozoom(self.image, self.angle, 1)
-                animation_steps -= 1
-                if animation_steps == 0:
+                if animation_steps < 1:
+                    step = animation_steps
+                else:
+                    step = 1
+                self.angle += step
+                if(self.shown):
+                    self.draw_image = pygame.transform.rotozoom(self.image, self.angle, 1)
+                animation_steps -= step
+                if animation_steps < 0.01:
                     thread_command = None
                     break
         thread_command = thread_left
@@ -147,9 +162,10 @@ class Turtle():
     def right(self, angle) -> None:
         global thread_command
         global animation_steps
+        global BLOCK_TIME
         # block until free
         while thread_command != None:
-            time.sleep(0.1)
+            time.sleep(BLOCK_TIME)
         animation_steps = angle
         def thread_left():
             global START_SPEED
@@ -161,24 +177,33 @@ class Turtle():
             else:
                 speed = HIDE_SPEED
             for i in range(int(speed / START_SPEED * 2)):
-                self.angle -= 1
-                self.draw_image = pygame.transform.rotozoom(self.image, self.angle, 1)
-                animation_steps -= 1
-                if animation_steps == 0:
+                if animation_steps < 1:
+                    step = animation_steps
+                else:
+                    step = 1
+                self.angle -= step
+                if(self.shown):
+                    self.draw_image = pygame.transform.rotozoom(self.image, self.angle, 1)
+                animation_steps -= step
+                if animation_steps < 0.01:
                     thread_command = None
                     break
         thread_command = thread_left
 
     def penDown(self) -> None:
+        global thread_command
+        global BLOCK_TIME
         # block until free
         while thread_command != None:
-            time.sleep(0.1)
+            time.sleep(BLOCK_TIME)
         self.pen_down = True
 
     def penUp(self) -> None:
+        global thread_command
+        global BLOCK_TIME
         # block until free
         while thread_command != None:
-            time.sleep(0.1)
+            time.sleep(BLOCK_TIME)
         self.pen_down = False
 
     def leftArc(self, selfradius, angle) -> None:
@@ -207,8 +232,10 @@ class Turtle():
 
     def setY(self, y) -> None:
         global thread_command
+        global BLOCK_TIME
+        # block until free
         while thread_command != None:
-            time.sleep(0.1)
+            time.sleep(BLOCK_TIME)
         self.y = y
 
     def getPos(self) -> list:
@@ -300,9 +327,13 @@ def back(distance) -> None:
     main_turtle.back(distance)
 
 def showTurtle() -> None:
+    global global_show
+    global_show = True
     main_turtle.showTurtle()
 
 def hideTurtle() -> None:
+    global global_show
+    global_show = False
     main_turtle.hideTurtle()
 
 def home() -> None:
@@ -375,6 +406,7 @@ def _drawThread():
     global screen
     global paper
     global thread_command
+    global global_show
     while draw_thread_running:
         if thread_command != None:
             thread_command()
@@ -386,7 +418,8 @@ def _drawThread():
         screen.blit(paper, (0, 0))
         main_turtle.draw(screen)
         pygame.display.update()
-        pygame.time.wait(20)
+        if global_show:
+            pygame.time.wait(20)
 
 def _drawPixelLine(surface, position, color):
     cursor = (position[0] + 1, position[1])
