@@ -137,7 +137,7 @@ class Turtle():
                 speed = HIDE_SPEED
             for i in range(int(speed / START_SPEED * 2)):
                 self.angle += 1
-                self.draw_image = pygame.transform.rotate(self.image, self.angle)
+                self.draw_image = pygame.transform.rotozoom(self.image, self.angle, 1)
                 animation_steps -= 1
                 if animation_steps == 0:
                     thread_command = None
@@ -162,7 +162,7 @@ class Turtle():
                 speed = HIDE_SPEED
             for i in range(int(speed / START_SPEED * 2)):
                 self.angle -= 1
-                self.draw_image = pygame.transform.rotate(self.image, self.angle)
+                self.draw_image = pygame.transform.rotozoom(self.image, self.angle, 1)
                 animation_steps -= 1
                 if animation_steps == 0:
                     thread_command = None
