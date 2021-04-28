@@ -417,7 +417,7 @@ def _drawPixelLine(surface, position, color):
 
     cursor = position
     cursor_color = surface.get_at(cursor)
-    surface.set_at(cursor, _addColor(cursor_color, color))
+    surface.set_at(cursor, _addColor(cursor_color, (color[0], color[1], color[2], 75)))
 
 def _addColor(color_1, color_2):
     if len(color_1) == 3:
