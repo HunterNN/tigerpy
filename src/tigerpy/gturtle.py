@@ -6,6 +6,7 @@ import os
 import resource
 from tigerpy.vector2d import Vector2D
 
+
 __author__ = "Stephan Kessler"
 __copyright__ = "Stephan Kessler"
 __license__ = "MIT"
@@ -39,20 +40,24 @@ class Turtle():
             (self.x - rect.centerx, self.y - rect.centery)))
 
     def forward(self, distance) -> None:
+        # kreiere Schrittvektor (x = 0 und y = self.speed)
+        # kreiere Positionsvektor der Schildkröte (x = self.x und y = self.y)
+        Vector2D.__sizeof__
         for i in range(distance):
-            pass
+            # addiere Schrittvektor auf Positionsvektor und speichere das Ergebnis in Positionsvektor wieder ab
+            # Schildkröte neu positionieren mit Positionsvektor self.setPos(x.., y...)
+            if self.shown:
+                sleep(20)
 
     def back(self, distance) -> None:
         # TODO
         pass
 
     def showTurtle(self) -> None:
-        # TODO
-        pass
+        self.shown = True
 
     def hideTurtle(self) -> None:
-        # TODO
-        pass
+        self.shown = False
 
     def home(self) -> None:
         # TODO
@@ -67,12 +72,10 @@ class Turtle():
         pass
 
     def penDown(self) -> None:
-        # TODO
-        pass
+        self.pen_down = True
 
     def penUp(self) -> None:
-        # TODO
-        pass
+        self.pen_down = False
 
     def leftArc(self, selfradius, angle) -> None:
         # TODO
