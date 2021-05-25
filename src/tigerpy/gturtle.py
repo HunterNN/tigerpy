@@ -206,6 +206,10 @@ class Turtle():
             time.sleep(BLOCK_TIME)
         self.pen_down = False
 
+    def setPenColor(self, color) -> None:
+        if isinstance(color, Color):
+            self.pen_color = color
+
     def leftArc(self, selfradius, angle) -> None:
         # TODO
         pass    
@@ -215,8 +219,7 @@ class Turtle():
         pass
 
     def setSpeed(self, speed) -> None:
-        # TODO
-        pass
+        self.speed = speed
 
     def getX(self) -> int:
         return self.x
@@ -350,6 +353,9 @@ def penDown() -> None:
 
 def penUp() -> None:
     main_turtle.penUp()
+
+def setPenColor(color) -> None:
+    main_turtle.setPenColor(color)
 
 def leftArc(radius, angle) -> None:
     main_turtle.leftArc(radius, angle)
