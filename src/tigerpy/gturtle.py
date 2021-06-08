@@ -23,9 +23,12 @@ animation_steps = 0
 global_show = True
 
 
+
+
 class Turtle():
     def __init__(self, type, scaling = 0.5) -> None:
         global START_SPEED
+        self.running = True
         self.image_path = type
         self.x = 0
         self.y = 0
@@ -38,6 +41,13 @@ class Turtle():
         self.image = pygame.transform.smoothscale(
             image, (int(image.get_rect().width * scaling), int(image.get_rect().height * scaling)))
         self.draw_image = self.image
+
+
+                    
+
+
+
+    
 
     def draw(self, surface):
         if self.shown:
@@ -418,7 +428,10 @@ def _drawThread():
             thread_command()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                pygame.display.quit()
+                pygame.quit()
                 sys.exit()
+                self.running = False
                 draw_thread_running = False
         screen.fill(Color.white)
         screen.blit(paper, (0, 0))
