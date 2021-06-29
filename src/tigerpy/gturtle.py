@@ -414,6 +414,7 @@ def _drawThread():
             if event.type == pygame.QUIT:
                 sys.exit()
                 draw_thread_running = False
+                sys.exit()
         screen.fill(Color.white)
         screen.blit(paper, (0, 0))
         main_turtle.draw(screen)
