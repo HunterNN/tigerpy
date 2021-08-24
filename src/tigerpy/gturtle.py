@@ -50,8 +50,7 @@ class Turtle():
         global animation_steps
         global BLOCK_TIME
         # block until free
-        while thread_command != None:
-            time.sleep(BLOCK_TIME)
+        handleThreadBlocking()
         animation_steps = distance
         def thread_left():
             global START_SPEED
@@ -82,8 +81,7 @@ class Turtle():
         global animation_steps
         global BLOCK_TIME
         # block until free
-        while thread_command != None:
-            time.sleep(BLOCK_TIME)
+        handleThreadBlocking()
         animation_steps = distance
         def thread_left():
             global START_SPEED
@@ -112,8 +110,7 @@ class Turtle():
         global thread_command
         global BLOCK_TIME
         # block until free
-        while thread_command != None:
-            time.sleep(BLOCK_TIME)
+        handleThreadBlocking()
         self.draw_image = pygame.transform.rotozoom(self.image, self.angle, 1)
         self.shown = True
 
@@ -121,8 +118,7 @@ class Turtle():
         global thread_command
         global BLOCK_TIME
         # block until free
-        while thread_command != None:
-            time.sleep(BLOCK_TIME)
+        handleThreadBlocking()
         self.shown = False
 
     def home(self) -> None:
@@ -133,8 +129,7 @@ class Turtle():
         global animation_steps
         global BLOCK_TIME
         # block until free
-        while thread_command != None:
-            time.sleep(BLOCK_TIME)
+        handleThreadBlocking()
         animation_steps = angle
         def thread_left():
             global START_SPEED
@@ -164,8 +159,7 @@ class Turtle():
         global animation_steps
         global BLOCK_TIME
         # block until free
-        while thread_command != None:
-            time.sleep(BLOCK_TIME)
+        handleThreadBlocking()
         animation_steps = angle
         def thread_left():
             global START_SPEED
@@ -194,16 +188,14 @@ class Turtle():
         global thread_command
         global BLOCK_TIME
         # block until free
-        while thread_command != None:
-            time.sleep(BLOCK_TIME)
+        handleThreadBlocking()
         self.pen_down = True
 
     def penUp(self) -> None:
         global thread_command
         global BLOCK_TIME
         # block until free
-        while thread_command != None:
-            time.sleep(BLOCK_TIME)
+        handleThreadBlocking()
         self.pen_down = False
 
     def leftArc(self, selfradius, angle) -> None:
@@ -215,16 +207,14 @@ class Turtle():
         pass
 
     def setSpeed(self, speed) -> None:
-        # TODO
-        pass
+        speed = self.speed 
 
     def getX(self) -> int:
         return self.x
 
     def setX(self, x) -> None:
         global thread_command
-        while thread_command != None:
-            time.sleep(0.1)
+        handleThreadBlocking()
         self.x = x
 
     def getY(self) -> int:
@@ -259,6 +249,18 @@ class Turtle():
     def getHeading(self) -> int:
         return getDirectionToPoint(self.getX() + 1, self.getY())
 
+    def setPenColor(self, color) -> None:
+        self.pen_color = color
+        pass
+
+    def _handleThreadBlocking():
+        if not draw_thread_running:
+                draw_thread_running = False
+                pygame.display.quit()
+                pygame.quit()
+                sys.exit()
+        while thread_command != None:
+            time.sleep(BLOCK_TIME)
 
 class Color():
     white = (255, 255, 255)
@@ -397,6 +399,8 @@ def getDirectionToPoint(x, y) -> int:
 def getHeading() -> int:
     return main_turtle.getHeading()
 
+def setPenColor(self, color) -> None:
+    return main_turtle.setPenColor(color)
 
 # Private Functions
 
@@ -412,8 +416,9 @@ def _drawThread():
             thread_command()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                sys.exit()
                 draw_thread_running = False
+                pygame.display.quit()
+                pygame.quit()
                 sys.exit()
         screen.fill(Color.white)
         screen.blit(paper, (0, 0))
