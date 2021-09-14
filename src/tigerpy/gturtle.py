@@ -255,10 +255,10 @@ class Turtle():
 
     def _handleThreadBlocking():
         if not draw_thread_running:
-                draw_thread_running = False
-                pygame.display.quit()
-                pygame.quit()
-                sys.exit()
+            draw_thread_running = False
+            pygame.display.quit()
+            pygame.quit()
+            sys.exit()
         while thread_command != None:
             time.sleep(BLOCK_TIME)
 
@@ -420,6 +420,8 @@ def _drawThread():
                 pygame.display.quit()
                 pygame.quit()
                 sys.exit()
+                self.running = False
+                draw_thread_running = False
         screen.fill(Color.white)
         screen.blit(paper, (0, 0))
         main_turtle.draw(screen)
