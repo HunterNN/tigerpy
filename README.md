@@ -11,12 +11,12 @@ This project aims to clone the tigerjython project to the python environment wit
 
 ## Install
 ### Windows
-`pip install git+https://git.hunter99.ch/Hunter99/tigerpy -U`
-### Ubuntu
-`sudo pip3 install git+https://git.hunter99.ch/Hunter99/tigerpy -U`
+`pip install git+https://github.com/HunterNN/tigerpy -U`
+### Linux
+`sudo pip3 install git+https://github.com/HunterNN/tigerpy -U`
 
 ## Local Tests
-### Ubuntu Local Install
+### Linux Local Install
 `sudo pip3 install file///path/to/the/repository -U`
 
 ## Note
