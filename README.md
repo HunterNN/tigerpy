@@ -17,7 +17,7 @@ This project aims to clone the tigerjython project to the python environment wit
 
 ## Local Tests
 ### Linux Local Install
-`sudo pip3 install file///path/to/the/repository -U`
+`sudo pip3 install file:///path/to/the/repository -U`
 
 ## Note
 
