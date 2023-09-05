@@ -72,7 +72,7 @@ class Turtle():
                 if self.pen_down:
                     _drawPixelLine(paper, _convertToPygameCords((self.x, self.y)), self.pen_color)
                 animation_steps -= 1
-                if animation_steps == 0:
+                if animation_steps <= 0:
                     thread_command = None
                     break
         thread_command = thread_left
@@ -103,7 +103,7 @@ class Turtle():
                 if self.pen_down:
                     _drawPixelLine(paper, _convertToPygameCords((self.x, self.y)), self.pen_color)
                 animation_steps -= 1
-                if animation_steps == 0:
+                if animation_steps <= 0:
                     thread_command = None
                     break
         thread_command = thread_left
